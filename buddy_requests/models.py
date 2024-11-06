@@ -12,9 +12,9 @@ class BuddyRequest(models.Model):
     requester = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sent_requests')
     recipient = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='received_requests')
     deal = models.ForeignKey(Deal, on_delete=models.CASCADE, related_name='buddy_requests')
-    status = models.CharField(max_length=20, choices=[
-        ('Pending', 'Pending'), ('Accepted', 'Accepted'), ('Declined', 'Declined')
-                                                      ], default='Pending')
+    status = models.CharField(max_length=20, choices=[('Request', 'Request'),
+        ('Accepted', 'Accepted'), ('Declined', 'Declined')
+                                                      ], default='Request')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -30,17 +30,17 @@ class BuddyRequest(models.Model):
 
 @register_snippet
 class Buddy(models.Model):
-    user1 = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='buddies_as_user1')
-    user2 = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='buddies_as_user2')
+    requester = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='buddies_as_requester')
+    recipient = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='buddies_as_recipient')
     deal = models.ForeignKey(Deal, on_delete=models.CASCADE)
     confirmed_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user1.username} & {self.user2.username} for {self.deal.title}"
+        return f"{self.requester.username} & {self.recipient.username} for {self.deal.title}"
 
     panels = [
-        FieldPanel("user1"),
-        FieldPanel("user2"),
+        FieldPanel("requester"),
+        FieldPanel("recipient"),
         FieldPanel("deal"),
     ]
 
