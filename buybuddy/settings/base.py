@@ -74,12 +74,15 @@ MIDDLEWARE = [
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
+"""
 CORS_ALLOWED_ORIGINS = [
-    "https://thedatamine.io",
-    "http://thedatamine.io",
+    "https://buybuddysave.co.za/",
+    "https://buybuddysave.co.za/"
     "http://localhost:9000",
     "http://127.0.0.1:9000",
 ]
+"""
+CORS_ALLOW_ALL_ORIGINS = True
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
@@ -172,6 +175,18 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
+
+"""
+STATICFILES_DIRS = [
+    "/var/www/Backend/buybuddy/static/",
+]
+
+STATIC_ROOT = "/var/www/Backend/static/"
+STATIC_URL = "/static/"
+
+MEDIA_ROOT = "/var/www/Backend/media/"
+MEDIA_URL = "/media/"
+"""
 
 STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, "static"),
