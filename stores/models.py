@@ -1,5 +1,7 @@
 from django.db import models
 
+from django.contrib.gis.db import models as postgis_models
+
 from wagtail.admin.panels import FieldPanel
 from wagtail.images.models import Image
 from wagtail.snippets.models import register_snippet
@@ -14,6 +16,7 @@ class Store(index.Indexed, models.Model):
     address = models.TextField()
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     website = models.URLField(blank=True, null=True)
+    location = postgis_models.PointField(geography=True, srid=4326, null=True, blank=True)
 
     def __str__(self):
         return self.name

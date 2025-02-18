@@ -25,11 +25,13 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",  # It must be on top of the installed apps
     "home",
     "search",
     "accounts",
     "stores",
     "buddy_requests",
+    "chat",
 
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
@@ -48,6 +50,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "corsheaders",
+    "channels",
 
     "django.contrib.admin",
     "django.contrib.auth",
@@ -55,6 +58,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.gis",
 
 ]
 
@@ -74,15 +78,20 @@ MIDDLEWARE = [
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
-"""
+
 CORS_ALLOWED_ORIGINS = [
-    "https://buybuddysave.co.za/",
-    "https://buybuddysave.co.za/"
+    "https://buybuddysave.co.za",
+    "http://buybuddysave.co.za",
     "http://localhost:9000",
     "http://127.0.0.1:9000",
 ]
-"""
-CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^file://.*$",
+]
+
+
+#CORS_ALLOW_ALL_ORIGINS = True
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
@@ -94,6 +103,35 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
+# https://www.gisinternals.com/query.html?content=filelist&file=release-1930-x64-gdal-3-10-0-mapserver-8-2-2.zip#google_vignette
+# https://download.lfd.uci.edu/pythonlibs/archived/GDAL-3.4.3-cp311-cp311-win_amd64.whl
+
+GDAL_LIBRARY_PATH = r"C:\OSGeo4W\bin\gdal309.dll"
+GEOS_LIBRARY_PATH = r"C:\OSGeo4W\bin\geos_c.dll"
+
+ASGI_APPLICATION = "chat.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
+
+
+"""
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+"""
 
 ###################################### End New Settings ###########################
 
@@ -126,7 +164,8 @@ WSGI_APPLICATION = "buybuddy.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        # "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": "buybuddydb",
         "USER": "postgres",
         "PASSWORD": "talibk700",

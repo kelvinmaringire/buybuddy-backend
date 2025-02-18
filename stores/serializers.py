@@ -17,14 +17,14 @@ class DealSerializer(serializers.ModelSerializer):
         model = Deal
         fields = '__all__'
 
-    def get_image_url1(self, obj):
+    def get_image_url(self, obj):
         if obj.pic:
             request = self.context.get('request')
             image_url = obj.pic.file.url
             return request.build_absolute_uri(image_url)
         return None
 
-    def get_image_url(self, obj):
+    def get_image_url1(self, obj):
         if obj.pic:
             request = self.context.get('request')
             image_url = obj.pic.file.url
