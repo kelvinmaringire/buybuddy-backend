@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from rest_framework import generics
+
+from .models import ChatMessage
+from .serializers import ChatMessageSerializer
 
 
-def index(request):
-    return render(request, "chat/index.html")
-
-def room(request, room_name):
-    return render(request, "chat/room.html", {"room_name": room_name})
+class ChatMessageListCreate(generics.ListCreateAPIView):
+    queryset = ChatMessage.objects.all()
+    serializer_class = ChatMessageSerializer

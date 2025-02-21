@@ -47,7 +47,7 @@ class ChatConsumer(WebsocketConsumer):
         chat_message_dict = model_to_dict(chat_message)
         chat_message_dict['timestamp'] = chat_message.timestamp.isoformat()
         chat_message_dict['type'] = "chat_message"
-        print(chat_message_dict)
+        chat_message_dict['name'] = user.username
 
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
@@ -56,13 +56,16 @@ class ChatConsumer(WebsocketConsumer):
     # Receive message from room group
     def chat_message(self, event):
         buddy = event["buddy"]
+        name = event["name"]
         sender = event["sender"]
         message = event["message"]
         timestamp = event["timestamp"]
 
         # Send message to WebSocket
         self.send(text_data=json.dumps({
+            "type": "chat_message",
             "buddy": buddy,
+            "name": name,
             "sender": sender,
             "message": message,
             "timestamp": timestamp
