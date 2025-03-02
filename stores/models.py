@@ -61,7 +61,7 @@ class Deal(models.Model):
 @register_snippet
 class ShoppingList(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='shopping_lists')
-    deals = models.ManyToManyField(Deal, null=True, blank=True)
+    deals = models.ManyToManyField(Deal, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
