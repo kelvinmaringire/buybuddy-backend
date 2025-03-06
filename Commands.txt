@@ -1,6 +1,6 @@
 pip freeze > requirements.txt
 
-su - root
+bash
 
 sudo apt update
 
@@ -33,7 +33,7 @@ sudo service nginx start
 
 sudo systemctl restart nginx
 
-sudo apt install cron
+sudo apt install redis-server
 
 sudo apt install build-essential libpq-dev python3-dev python3-venv
 
@@ -48,9 +48,9 @@ sudo -i -u postgres psql
 
 ALTER USER postgres WITH PASSWORD 'talibk700';
 
-CREATE DATABASE thedatam_db;
+CREATE DATABASE buybuddydb;
 
-GRANT ALL PRIVILEGES ON DATABASE thedatam_db TO postgres;
+GRANT ALL PRIVILEGES ON DATABASE buybuddydb TO postgres;
 
 ALTER USER postgres WITH SUPERUSER;
 
@@ -58,23 +58,23 @@ ALTER USER postgres WITH SUPERUSER;
 
 cd /var/www
 
-git clone https://github.com/kelvinmaringire/api.thedatamine.io.git
+sudo git clone https://github.com/kelvinmaringire/Backend.git
 
-cd api.thedatamine.io
+cd Backend
+sudo chmod -R 777 /var/www/Backend
 
 python3 -m venv myenv
 
 source myenv/bin/activate
 
-sudo -u postgres psql thedatam_db < thedatam_db_140824.sql
+sudo -u postgres psql buybuddydb < buybuddydb.sql
 
 pip install -r requirements.txt
 
-playwright install
+pip install GDAL==$(gdal-config --version)  # for geo apps
 
-playwright install-deps
-
-pip install GDAL  # for geo apps
+# settings.py
+# GDAL_LIBRARY_PATH = 'C:/OSGeo4W/bin/gdal309.dll'  # Remove or comment this line
 
 pip install gunicorn
 
@@ -84,45 +84,55 @@ mkdir conf
 
 nano conf/gunicorn_config.py
 
-command = '/var/www/api.thedatamine.io/myenv/bin/gunicorn'
-pythonpath = '/var/www/api.thedatamine.io'
-bind = '85.190.240.240:8000'
+command = '/var/www/Backend/myenv/bin/gunicorn'
+pythonpath = '/var/www/Backend'
+bind = '102.209.118.59:8000'
 workers = 3
 
-gunicorn -c conf/gunicorn_config.py thedatamine.wsgi
+gunicorn -c conf/gunicorn_config.py buybuddy.wsgi
 
 
 Ctrl Z && bg for playing in the background
 
-sudo service nginx start
-
-nano thedatamine/settings/base.py
+nano buybuddy/settings/base.py
 
 
 STATICFILES_DIRS = [
-    "/var/www/api.thedatamine.io/thedatamine/static/",
+    "/var/www/Backend/buybuddy/static/",
 ]
 
-STATIC_ROOT = "/var/www/api.thedatamine.io/static/"
+STATIC_ROOT = "/var/www/Backend/static/"
 
-MEDIA_ROOT = "/var/www/api.thedatamine.io/media/"
+MEDIA_ROOT = "/var/www/Backend/media/"
 
 python manage.py collectstatic
 
 deactivate
 
-sudo nano /etc/nginx/sites-available/thedatamine
+sudo nano /etc/nginx/sites-available/buybuddy
 
 server {
     listen 80;
-    server_name thedatamine.site;
+    server_name buybuddysave.co.za;
 
     location /static/ {
-        alias /var/www/api.thedatamine.io/static/;
+        alias /var/www/Backend/static/;
     }
 
+location /ws/ {
+    proxy_pass http://102.209.118.59:8000;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+
     location / {
-        proxy_pass http://85.190.240.240:8000;
+        proxy_pass http://102.209.118.59:8000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -132,71 +142,60 @@ server {
 
 cd /etc/nginx/sites-enabled/
 
-sudo ln -s /etc/nginx/sites-available/thedatamine
+sudo ln -s /etc/nginx/sites-available/buybuddy
 
 sudo rm default
 
 sudo apt install certbot python3-certbot-nginx
 
-sudo certbot --nginx -d thedatamine.site
+sudo certbot --nginx -d buybuddysave.co.za
 
 sudo systemctl restart nginx
 
-sudo nano /etc/ssh/sshd_config
-sudo systemctl restart ssh
-sudo systemctl restart ssh
+server {
+    server_name buybuddysave.co.za;
+
+    location /static/ {
+        alias /var/www/Backend/static/;
+    }
 
 
-pscp -P 22 forebet_data.json root@85.190.240.240:/var/www/api.thedatamine.io/media/documents/
-pscp.exe -P 22 root@156.155.253.131:/var/www/api.thedatamine.io/media/documents/forebet_data.json C:\Users\Ring'az\Desktop
-mv /root/forebet_data.json /var/www/api.thedatamine.io/media/documents/
-
-sudo apt install cron
-
-python manage.py crontab add
-
-python manage.py crontab show
-
-python manage.py crontab remove
-
-sudo crontab -e
-
-sudo service cron restart
+location /ws/ {
+    proxy_pass http://102.209.118.59:8000;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
 
 
-* * * * * cd /var/www/api.thedatamine.io/ && source myenv/bin/activate && python manage.py runcrons "thedatabet.cron.StatsData" >> /var/www/api.thedatamine.io/logs/cron.log 2>&1
+    location / {
+        proxy_pass http://102.209.118.59:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/buybuddysave.co.za/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/buybuddysave.co.za/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
 
-* * * * * source /root/.bashrc && source /var/www/api.thedatamine.io/myenv/bin/activate && python /var/www/api.thedatamine.io/manage.py runcrons >> /var/www/api.thedatamine.io/logs/cron.log 2>&1
-
-* * * * * source /root/.bashrc && source /var/www/api.thedatamine.io/myenv/bin/activate && python /var/www/api.thedatamine.io/manage.py stats_data >> /var/www/api.thedatamine.io/logs/cron.log 2>&1
-
-
-53 2 * * * cd /var/www/api.thedatamine.io/ && source myenv/bin/activate && python manage.py stats_data >> /var/www/api.thedatamine.io/logs/cron.log.log 2>&1
- /tmp/crontab.Pqwz3l/crontab
-tail -f /var/log/syslog
-
-tail -f /var/www/api.thedatamine.io/logs/cron.log
+}
+server {
+    if ($host = buybuddysave.co.za) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
 
 
-rm -r /path/to/folder
-pwd -> current working directory
+    listen 80;
+    server_name buybuddysave.co.za;
+    return 404; # managed by Certbot
 
-
-Database
-
-sudo nano /etc/postgresql/14/main/pg_hba.conf
-
-local   all             postgres                                peer
-To
-local   all             postgres                                md5
-
-pg_dump -U postgres -F c -b -v -f backup.sql thedatam_db
-
-Database in local
-
-\q
-
-cd C:\Users\Ring'az\Documents\Apps\api.thedatamine.io
-
-"C:\Program Files\PostgreSQL\15\bin\psql.exe" -h localhost -p 5432 -U postgres -d thedatam_dbb -f thedatam_db_140824.sql
+}
