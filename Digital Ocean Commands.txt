@@ -4,22 +4,6 @@ sudo apt update
 
 sudo apt install python3-pip python3-dev libpq-dev postgresql postgresql-contrib postgis gdal-bin libgdal-dev nginx curl
 
-sudo -u postgres psql
-
-CREATE DATABASE django_db;
-
-CREATE USER django WITH PASSWORD 'password';
-
-ALTER ROLE django SET client_encoding TO 'utf8';
-
-ALTER ROLE django SET default_transaction_isolation TO 'read committed';
-
-ALTER ROLE django SET timezone TO 'UTC';
-
-GRANT ALL PRIVILEGES ON DATABASE django_db TO django;
-
-\q
-
 sudo -H pip3 install --upgrade pip
 
 sudo -H pip3 install virtualenv
