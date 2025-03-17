@@ -5,7 +5,7 @@
 -- Dumped from database version 15.2
 -- Dumped by pg_dump version 15.2
 
--- Started on 2025-03-02 22:13:43
+-- Started on 2025-03-17 22:36:52
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -2133,6 +2133,7 @@ COPY public.chat_chatmessage (id, message, "timestamp", buddy_id, sender_id) FRO
 47	ok iam up fpr it	2025-02-20 13:00:24.969805+02	4	3
 48	lest do it 	2025-02-20 13:00:55.72931+02	4	3
 49	its a good product	2025-02-20 13:01:05.991534+02	4	3
+50	lks	2025-03-03 02:48:06.842512+02	4	3
 \.
 
 
@@ -2822,6 +2823,8 @@ COPY public.wagtailcore_referenceindex (id, object_id, to_object_id, model_path,
 139	48	4	buddy	buddy	94529945-8cd7-5a1a-bf52-698665b6e255	51	51	47
 140	49	3	sender	sender	7ab2e35a-23c8-5018-8cfc-4032b3af9edb	51	51	29
 141	49	4	buddy	buddy	94529945-8cd7-5a1a-bf52-698665b6e255	51	51	47
+142	50	4	buddy	buddy	94529945-8cd7-5a1a-bf52-698665b6e255	51	51	47
+143	50	3	sender	sender	7ab2e35a-23c8-5018-8cfc-4032b3af9edb	51	51	29
 \.
 
 
@@ -3133,7 +3136,7 @@ SELECT pg_catalog.setval('public.buddy_requests_reviewbuddy_id_seq', 1, false);
 -- Name: chat_chatmessage_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.chat_chatmessage_id_seq', 49, true);
+SELECT pg_catalog.setval('public.chat_chatmessage_id_seq', 50, true);
 
 
 --
@@ -3385,7 +3388,7 @@ SELECT pg_catalog.setval('public.wagtailcore_pageviewrestriction_id_seq', 1, fal
 -- Name: wagtailcore_referenceindex_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.wagtailcore_referenceindex_id_seq', 141, true);
+SELECT pg_catalog.setval('public.wagtailcore_referenceindex_id_seq', 143, true);
 
 
 --
@@ -6409,7 +6412,7 @@ ALTER TABLE ONLY public.wagtailusers_userprofile
     ADD CONSTRAINT wagtailusers_userpro_user_id_59c92331_fk_accounts_ FOREIGN KEY (user_id) REFERENCES public.accounts_customuser(id) DEFERRABLE INITIALLY DEFERRED;
 
 
--- Completed on 2025-03-02 22:14:00
+-- Completed on 2025-03-17 22:37:02
 
 --
 -- PostgreSQL database dump complete

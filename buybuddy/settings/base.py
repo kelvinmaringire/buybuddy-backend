@@ -106,32 +106,7 @@ REST_FRAMEWORK = {
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-
-# https://www.gisinternals.com/query.html?content=filelist&file=release-1930-x64-gdal-3-10-0-mapserver-8-2-2.zip#google_vignette
-# https://download.lfd.uci.edu/pythonlibs/archived/GDAL-3.4.3-cp311-cp311-win_amd64.whl
-
-GDAL_LIBRARY_PATH = r"C:\OSGeo4W\bin\gdal309.dll"
-GEOS_LIBRARY_PATH = r"C:\OSGeo4W\bin\geos_c.dll"
-
 ASGI_APPLICATION = "chat.asgi.application"
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    },
-}
-
-
-"""
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
-        },
-    },
-}
-"""
 
 ###################################### End New Settings ###########################
 
@@ -214,26 +189,8 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
-"""
-STATICFILES_DIRS = [
-    "/var/www/Backend/buybuddy/static/",
-]
-
-STATIC_ROOT = "/var/www/Backend/static/"
 STATIC_URL = "/static/"
 
-MEDIA_ROOT = "/var/www/Backend/media/"
-MEDIA_URL = "/media/"
-"""
-
-STATICFILES_DIRS = [
-    os.path.join(PROJECT_DIR, "static"),
-]
-
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
-STATIC_URL = "/static/"
-
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
 # Default storage settings, with the staticfiles storage updated.
