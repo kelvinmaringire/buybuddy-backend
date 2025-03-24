@@ -78,7 +78,7 @@ MIDDLEWARE = [
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
-
+"""
 CORS_ALLOWED_ORIGINS = [
     "https://buybuddysave.co.za",
     "http://buybuddysave.co.za",
@@ -89,9 +89,9 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^file://.*$",
 ]
+"""
 
-
-#CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),

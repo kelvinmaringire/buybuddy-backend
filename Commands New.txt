@@ -8,7 +8,7 @@ sudo apt update
 
 sudo apt upgrade -y
 
-sudo apt install build-essential libpq-dev python3-dev python3-venv -y
+sudo apt install build-essential libpq-dev python3-dev python3-venv gunicorn -y
 
 sudo apt install nodejs npm -y
 
@@ -58,16 +58,27 @@ source myenv/bin/activate
 
 pip install -r requirements.txt
 
+pip install gunicorn
+
 pip install GDAL==$(gdal-config --version)
 
 sudo -u postgres psql buybuddydb < buybuddydb.sql
 
-sudo nano thedatamine/wsgi.py
+sudo nano buybuddy/wsgi.py
 
 change 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "thedatamine.settings.dev")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "buybuddy.settings.dev")
 to 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "thedatamine.settings.production")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "buybuddy.settings.production")
+
+sudo mkdir static
+
+sudo mkdir buybuddy/static
+
+sudo mkdir conf
+
+# settings.py
+# GDAL_LIBRARY_PATH = 'C:/OSGeo4W/bin/gdal309.dll'  # Remove or comment this line
 
 python manage.py collectstatic
 
@@ -139,6 +150,8 @@ sudo systemctl daemon-reload
 sudo systemctl enable daphne
 
 sudo systemctl start daphne
+
+sudo systemctl restart daphne
 
 sudo nano conf/gunicorn_config.py
 
@@ -216,6 +229,8 @@ sudo systemctl restart nginx
 sudo apt install certbot python3-certbot-nginx -y
 
 sudo certbot --nginx -d buybuddysave.co.za
+
+sudo systemctl daemon-reload
 
 sudo systemctl restart postgresql
 
