@@ -114,6 +114,8 @@ Ctrl Z && bg -> for playing in the background
 
 python manage.py collectstatic
 
+daphne -b 127.0.0.1 -p 8001 chat.asgi:application
+
 deactivate
 
 sudo nano /etc/systemd/system/gunicorn.service
