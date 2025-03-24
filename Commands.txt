@@ -1,30 +1,14 @@
 pip freeze > requirements.txt
 
-bash
-
-passwd
+sudo passwd root
 
 sudo apt update
 
 sudo apt upgrade -y
 
-sudo apt install nodejs npm -y
-
-sudo npm install -g wscat
-
-sudo apt install nginx redis-server supervisor git
-
-sudo nano /etc/redis/redis.conf
-
-supervised no (to) supervised systemd
-
-sudo systemctl restart redis
-
-sudo systemctl enable redis-server
+sudo timedatectl set-timezone Africa/Johannesburg
 
 sudo ufw enable
-
-sudo ufw status
 
 sudo ufw allow 80/tcp
 
@@ -32,22 +16,29 @@ sudo ufw allow 8000/tcp
 
 sudo ufw allow 443/tcp
 
-sudo ufw allow ssh
+sudo ufw allow 22/tcp
+
+sudo ufw allow 'Nginx Full'
+
+sudo ufw allow 8001
 
 sudo ufw reload
 
-point domain to VPS
-https://www.youtube.com/watch?v=NM2NkMfQLWI
+sudo ufw status
 
-sudo nginx -t   #test conf
+sudo apt install nginx redis-server supervisor git node-ws -y
 
-sudo service nginx start
+sudo nano /etc/redis/redis.conf
 
-sudo systemctl restart nginx
+Change supervised no to supervised systemd
 
-sudo apt install build-essential libpq-dev python3-dev python3-venv
+sudo systemctl restart redis
 
-sudo apt install postgresql postgresql-contrib postgis gdal-bin libgdal-dev postgresql-common
+sudo systemctl enable redis-server
+
+sudo apt install build-essential libpq-dev python3-dev python3-venv git -y
+
+sudo apt install postgresql postgresql-contrib postgis gdal-bin libgdal-dev postgresql-common -y
 
 sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
 
@@ -68,52 +59,66 @@ cd /var/www
 sudo git clone https://github.com/kelvinmaringire/Backend.git
 
 cd Backend
-sudo chmod -R 777 /var/www/Backend
 
-python3 -m venv myenv
+sudo python3 -m venv myenv
 
 source myenv/bin/activate
 
-sudo -u postgres psql buybuddydb < buybuddydb.sql
-
 pip install -r requirements.txt
 
-pip install GDAL==$(gdal-config --version)  # for geo apps
+pip install GDAL==$(gdal-config --version)
 
-# settings.py
+sudo -u postgres psql buybuddydb < buybuddydb.sql
+
+nano chat/asgi.py
+
+change
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "buybuddy.settings.dev")
+to 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "buybuddy.settings.production")
+
+sudo nano buybuddy/wsgi.py
+
+change 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "buybuddy.settings.dev")
+to 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "buybuddy.settings.production")
+
+sudo nano buybuddy/settings/dev.py
+
 # GDAL_LIBRARY_PATH = 'C:/OSGeo4W/bin/gdal309.dll'  # Remove or comment this line
-
-sudo nano /etc/systemd/system/daphne.service
-
-##############################
-
-[Unit]
-Description=Daphne server for Django
-After=network.target
-
-[Service]
-ExecStart=/var/www/Backend/myenv/bin/daphne -u /run/daphne/daphne.sock chat.asgi:application
-WorkingDirectory=/var/www/Backend
-User=www-data
-Group=www-data
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-
-
-##############################
-
-sudo systemctl daemon-reload
-sudo systemctl enable daphne
-sudo systemctl start daphne
-
 
 pip install gunicorn
 
+sudo mkdir static
+
+sudo mkdir buybuddy/static
+
+sudo mkdir conf
+
+sudo nano conf/gunicorn_config.py
+
+##################################
+
+command = '/var/www/Backend/myenv/bin/gunicorn'
+pythonpath = '/var/www/Backend'
+bind = '167.71.130.8:8000'
+workers = 3
+
+##################################
+
+
+gunicorn -c conf/gunicorn_config.py buybuddy.wsgi
+
+Ctrl Z && bg -> for playing in the background
+
+python manage.py collectstatic
+
+deactivate
+
 sudo nano /etc/systemd/system/gunicorn.service
 
-#########################
+####################################
 
 [Unit]
 Description=Gunicorn instance to serve your Django app
@@ -123,17 +128,16 @@ After=network.target
 User=root
 Group=www-data
 WorkingDirectory=/var/www/Backend
-ExecStart=/var/www/Backend/myenv/bin/gunicorn --workers 3 --bind unix:/run/gunicorn.sock buybuddy.wsgi:application
+ExecStart=/var/www/Backend/myenv/bin/gunicorn --workers 3 --timeout 120 --bind unix:/run/gunicorn.sock buybuddy.wsgi:application
+Environment="DJANGO_SETTINGS_MODULE=buybuddy.settings.production"
 
 Restart=always
 RestartSec=5
-KillMode=mixed
-TimeoutStopSec=5
 
 [Install]
 WantedBy=multi-user.target
 
-###########################
+####################################
 
 sudo systemctl start gunicorn
 
@@ -143,106 +147,60 @@ sudo systemctl restart gunicorn
 
 sudo systemctl status gunicorn
 
-sudo systemctl daemon-reload -> If you make changes to the service file, you need to reload the systemd daemon:
+daphne -p 8001 chat.asgi:application
 
-mkdir static
-
-mkdir conf
-
-nano conf/gunicorn_config.py
-
-command = '/var/www/Backend/myenv/bin/gunicorn'
-pythonpath = '/var/www/Backend'
-bind = '167.71.130.8:8000'
-workers = 3
-
-gunicorn -c conf/gunicorn_config.py buybuddy.wsgi
-
-Ctrl Z && bg for playing in the background
-
-nano buybuddy/wsgi.py
-
-Change:
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "buybuddy.settings.dev")
-To:
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "buybuddy.settings.production")
+daphne chat.asgi:application
 
 
-python manage.py collectstatic
+sudo nano /etc/supervisor/conf.d/asgi.conf
 
-deactivate
+##################################
+
+[program:asgi]
+directory=/var/www/Backend
+command=/var/www/Backend/myenv/bin/daphne -b 127.0.0.1 -p 8001 chat.asgi:application
+user=root
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/asgi.log
+redirect_stderr=true
+
+#########################################
+
+sudo supervisorctl reread
+
+sudo supervisorctl update
+
+sudo supervisorctl start asgi
+
+sudo supervisorctl status asgi
 
 sudo nano /etc/nginx/sites-available/buybuddy
 
-server {
-    listen 80;
-    server_name buybuddysave.co.za;
+##################################
 
-    location /static/ {
-        alias /var/www/Backend/static/;
-    }
-
-    location / {
-        proxy_pass http://167.71.130.8:8000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
+upstream daphne {
+    server 127.0.0.1:8001;
 }
 
-cd /etc/nginx/sites-enabled/
 
-sudo ln -s /etc/nginx/sites-available/buybuddy
-
-sudo rm default
-
-sudo apt install certbot python3-certbot-nginx
-
-sudo certbot --nginx -d buybuddysave.co.za
-
-sudo systemctl restart nginx
-
-
-nano /etc/supervisor/conf.d/daphne.conf
-
-[program:daphne]
-command=/var/www/Backend/myenv/bin/daphne -u /run/daphne/daphne.sock --proxy-headers chat.asgi:application
-directory=/var/www/Backend
-user=www-data
-autostart=true
-autorestart=true
-stdout_logfile=/var/log/daphne.log
-redirect_stderr=true
-
-sudo mkdir /run/daphne
-sudo chown www-data:www-data /run/daphne
-sudo supervisorctl reread
-sudo supervisorctl update
-sudo supervisorctl start daphne
-
-
-sudo systemctl restart redis
-sudo supervisorctl restart daphne
-
-wscat -c wss://buybuddysave.co.za/ws/chat/4
-
-
-##########################
 upstream gunicorn {
     server unix:/run/gunicorn.sock;
 }
 
-upstream daphne {
-    server unix:/run/daphne/daphne.sock;
-}
-
 server {
     server_name buybuddysave.co.za;
 
     location /static/ {
         alias /var/www/Backend/static/;
     }
+
+
+
+    location /media/ {
+        alias /var/www/Backend/media/;
+    }
+
 
     location / {
         proxy_pass http://gunicorn;
@@ -251,42 +209,70 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
 
-        proxy_connect_timeout 300;
-        proxy_send_timeout 300;
-        proxy_read_timeout 300;
-        send_timeout 300;
-    }  
-
-    # WebSocket configuration
-    location /ws/ {
-        proxy_pass http://daphne;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        client_max_body_size 20M;  
     }
 
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/buybuddysave.co.za/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/buybuddysave.co.za/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+   location /ws/ {
+       proxy_pass http://daphne;
+       proxy_http_version 1.1;
+       proxy_set_header Upgrade $http_upgrade;
+       proxy_set_header Connection "upgrade";
+       proxy_set_header Host $host;
+       proxy_set_header X-Real-IP $remote_addr;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       proxy_set_header X-Forwarded-Proto $scheme;
+    }
 
 }
 
-server {
-    if ($host = buybuddysave.co.za) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
 
-    listen 80;
-    server_name buybuddysave.co.za;
-    return 404; # managed by Certbot
-}
 
-####################################
+###################################
+
+cd /etc/nginx/sites-enabled/
+
+sudo ln -s /etc/nginx/sites-available/buybuddy
+
+sudo rm default 
+
+sudo nginx -t
+
+sudo systemctl restart nginx
+
+sudo apt install certbot python3-certbot-nginx -y
+
+sudo certbot --nginx -d buybuddysave.co.za
+
+sudo nginx -t
+
+sudo service nginx reload
+
+sudo systemctl daemon-reload
+
+sudo systemctl restart postgresql
+
+sudo systemctl restart gunicorn
+
+sudo supervisorctl restart asgi
+
+sudo systemctl restart redis
+
+sudo systemctl restart nginx
+
+wscat -c wss://buybuddysave.co.za/ws/chat/4
+
+sudo tail /var/log/nginx/error.log
+
+sudo tail /var/log/asgi.log
+
+
+
+
+
+
+
+
+
 
 
