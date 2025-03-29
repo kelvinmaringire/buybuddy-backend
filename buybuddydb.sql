@@ -5,7 +5,7 @@
 -- Dumped from database version 15.2
 -- Dumped by pg_dump version 15.2
 
--- Started on 2025-03-17 22:36:52
+-- Started on 2025-03-29 12:59:53
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -2440,6 +2440,7 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 223	stores	0004_store_location	2024-12-20 11:48:25.304583+02
 224	chat	0001_initial	2025-02-15 11:31:38.209515+02
 225	stores	0005_alter_shoppinglist_deals	2025-02-20 12:40:35.247821+02
+226	stores	0006_alter_shoppinglist_deals	2025-03-18 01:48:07.233364+02
 \.
 
 
@@ -3163,7 +3164,7 @@ SELECT pg_catalog.setval('public.django_content_type_id_seq', 51, true);
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.django_migrations_id_seq', 225, true);
+SELECT pg_catalog.setval('public.django_migrations_id_seq', 226, true);
 
 
 --
@@ -6412,7 +6413,7 @@ ALTER TABLE ONLY public.wagtailusers_userprofile
     ADD CONSTRAINT wagtailusers_userpro_user_id_59c92331_fk_accounts_ FOREIGN KEY (user_id) REFERENCES public.accounts_customuser(id) DEFERRABLE INITIALLY DEFERRED;
 
 
--- Completed on 2025-03-17 22:37:02
+-- Completed on 2025-03-29 13:00:08
 
 --
 -- PostgreSQL database dump complete

@@ -18,9 +18,7 @@ sudo ufw allow 443/tcp
 
 sudo ufw allow 22/tcp
 
-sudo ufw allow 'Nginx Full'
-
-sudo ufw allow 8001
+sudo ufw allow 8001/tcp
 
 sudo ufw reload
 
@@ -94,6 +92,8 @@ sudo mkdir static
 
 sudo mkdir buybuddy/static
 
+python manage.py collectstatic
+
 sudo mkdir conf
 
 sudo nano conf/gunicorn_config.py
@@ -111,12 +111,6 @@ workers = 3
 gunicorn -c conf/gunicorn_config.py buybuddy.wsgi
 
 Ctrl Z && bg -> for playing in the background
-
-python manage.py collectstatic
-
-daphne -b 127.0.0.1 -p 8001 chat.asgi:application
-
-deactivate
 
 sudo nano /etc/systemd/system/gunicorn.service
 
@@ -149,11 +143,6 @@ sudo systemctl restart gunicorn
 
 sudo systemctl status gunicorn
 
-daphne -p 8001 chat.asgi:application
-
-daphne chat.asgi:application
-
-
 sudo nano /etc/supervisor/conf.d/asgi.conf
 
 ##################################
@@ -173,11 +162,39 @@ sudo supervisorctl reread
 
 sudo supervisorctl update
 
-sudo supervisorctl start asgi
+sudo supervisorctl restart asgi
 
 sudo supervisorctl status asgi
 
+daphne -b 127.0.0.1 -p 8001 chat.asgi:application
+
+Ctrl Z && bg -> for playing in the background
+
+deactivate
+
 sudo nano /etc/nginx/sites-available/buybuddy
+
+###################################
+
+server {
+    listen 80;
+    server_name buybuddysave.co.za;
+
+    location /static/ {
+        alias /var/www/Backend/static/;
+    }
+
+    location / {
+        proxy_pass http://167.71.130.8:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+##################################
+
 
 ##################################
 
@@ -264,10 +281,14 @@ sudo systemctl restart nginx
 
 wscat -c wss://buybuddysave.co.za/ws/chat/4
 
+wscat -c wss://167.71.130.8/ws/chat/4
+
 sudo tail /var/log/nginx/error.log
 
 sudo tail /var/log/asgi.log
 
+
+sudo service nginx reload && sudo systemctl daemon-reload && sudo systemctl restart postgresql && sudo systemctl restart gunicorn && sudo supervisorctl restart asgi && sudo systemctl restart redis && sudo systemctl restart nginx
 
 
 
