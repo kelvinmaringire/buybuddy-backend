@@ -5,7 +5,7 @@
 -- Dumped from database version 15.2
 -- Dumped by pg_dump version 15.2
 
--- Started on 2025-03-29 12:59:53
+-- Started on 2025-04-18 10:54:42
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1794,7 +1794,7 @@ COPY public.accounts_customuser (id, password, last_login, is_superuser, usernam
 2	pbkdf2_sha256$600000$nypdEHW0lMhGHPyCuOBBlv$vpoSL4MajlYIT9K8KfcLSTbovfoC1QMJPSO5X+HSwUM=	2024-10-18 09:23:29.424396+02	t	loughan	Loughan	Buddy	kelvinmaringire@gmail.com	f	t	2024-10-07 12:18:30.20304+02	\N	\N	\N	\N	\N	\N
 3	pbkdf2_sha256$600000$Ptx1QqJm7JyeCgQilIiatd$q8q6xs/QSNN6tSI8zO5l+szFx38vP5+t4XsfhCaTPko=	2024-10-18 10:20:55.208712+02	f	pee	Nyasha	Mango	nyashypee@gmail.com	f	t	2024-10-18 10:20:37.367368+02	\N	\N	\N	\N	\N	\N
 4	pbkdf2_sha256$600000$FjMbqbtgut5lplivedY1j1$aLursJVth1kJCnLeJF3KCMZiP8fAcNAJagHMEfoygPw=	\N	f	talib	Talib	Kwali	ringazm@gmail.com	f	t	2024-11-11 14:01:04.432893+02	\N	\N	\N	\N	\N	\N
-1	pbkdf2_sha256$600000$zhWxz6WBXYYsszlhdT3ueZ$wANXkibG/aQsd5cBvTHGxroN6S7pJIxH/9LKMjuAWOU=	2025-02-15 12:04:11.2613+02	t	ringazm	Kelvin	Maringire	ringazm@gmail.com	t	t	2024-10-05 00:35:23.498193+02	\N	\N	\N	\N	\N	\N
+1	pbkdf2_sha256$600000$zhWxz6WBXYYsszlhdT3ueZ$wANXkibG/aQsd5cBvTHGxroN6S7pJIxH/9LKMjuAWOU=	2025-04-16 12:54:14.336842+02	t	ringazm	Kelvin	Maringire	ringazm@gmail.com	t	t	2024-10-05 00:35:23.498193+02	\N	\N	\N	\N	\N	\N
 \.
 
 
@@ -2134,6 +2134,7 @@ COPY public.chat_chatmessage (id, message, "timestamp", buddy_id, sender_id) FRO
 48	lest do it 	2025-02-20 13:00:55.72931+02	4	3
 49	its a good product	2025-02-20 13:01:05.991534+02	4	3
 50	lks	2025-03-03 02:48:06.842512+02	4	3
+51	ji	2025-04-16 13:00:12.348804+02	4	1
 \.
 
 
@@ -2458,6 +2459,7 @@ qsa3ri3osezbbfin8hi27maui2bwewsm	.eJxVjEEOwiAQRe_C2pDBUoZ26d4zkGkZLGrAQJtojHe3Tb
 cc4n57sttxuhtrxfp4icw1t7d4uswiaq	.eJxVjEEOwiAQRe_C2pDBUoZ26d4zkGkZLGrAQJtojHe3TbrQ7X_vv7dwtMyTWyoXF73ohRKH322g8cZpA_5K6ZLlmNNc4iA3Re60ynP2fD_t7l9gojqtb00dq04p3bRHRMMejA-haYxHHrUdVqpbaBUAaW2RCQANYeiQrQmWtmjlWmNOjp-PWF6ih88XWxQ-YA:1t8EuR:6kbrEltgkuM3U7q2mckG4rRTD0CT42IFhgJxT8pZZH0	2024-11-19 10:27:31.435438+02
 9cu7oc48kmashbazw2w1hvd4igpwe17w	.eJxVjEEOwiAQRe_C2pDBUoZ26d4zkGkZLGrAQJtojHe3TbrQ7X_vv7dwtMyTWyoXF73ohRKH322g8cZpA_5K6ZLlmNNc4iA3Re60ynP2fD_t7l9gojqtb00dq04p3bRHRMMejA-haYxHHrUdVqpbaBUAaW2RCQANYeiQrQmWtmjlWmNOjp-PWF6ih88XWxQ-YA:1tBjXL:KGKuwRXU_L3D5n6HE8Dvo2Rav82OJibfvl8gru5-Y0k	2024-11-29 01:46:07.000858+02
 za3imtoiyqn12pmwblxpcqcmas1hsmwe	.eJxVjEEOwiAQRe_C2pDBUoZ26d4zkGkZLGrAQJtojHe3TbrQ7X_vv7dwtMyTWyoXF73ohRKH322g8cZpA_5K6ZLlmNNc4iA3Re60ynP2fD_t7l9gojqtb00dq04p3bRHRMMejA-haYxHHrUdVqpbaBUAaW2RCQANYeiQrQmWtmjlWmNOjp-PWF6ih88XWxQ-YA:1tjF1v:FHkdu6ROtyaUT_prAAfza_zAcZo24qZDAxstP0I8pjk	2025-03-01 12:04:11.690081+02
+a0czvlt3mfkp3uoggmpmjy78x1azi9r3	.eJxVjEEOwiAQRe_C2pChpQy4dO8ZyLQMFjVgSptojHe3TbrQ7X_vv7fwtMyjXypPPgVxFEocfreehhvnDYQr5UuRQ8nzlHq5KXKnVZ5L4Ptpd_8CI9VxfWtyrJxSuu0aRMMBTIixbU1AHrTtV6o76BQAaW2RCQANYXTI1kRLW7Ryralkz89Hml7iqBpwBuDzBdPgP5I:1u50PG:gRrMGpA5BLgV_1Epwd3S_UM-F6OIu8qfkYhsphaHWVQ	2025-04-30 12:54:14.959017+02
 \.
 
 
@@ -2826,6 +2828,8 @@ COPY public.wagtailcore_referenceindex (id, object_id, to_object_id, model_path,
 141	49	4	buddy	buddy	94529945-8cd7-5a1a-bf52-698665b6e255	51	51	47
 142	50	4	buddy	buddy	94529945-8cd7-5a1a-bf52-698665b6e255	51	51	47
 143	50	3	sender	sender	7ab2e35a-23c8-5018-8cfc-4032b3af9edb	51	51	29
+144	51	1	sender	sender	7ab2e35a-23c8-5018-8cfc-4032b3af9edb	51	51	29
+145	51	4	buddy	buddy	94529945-8cd7-5a1a-bf52-698665b6e255	51	51	47
 \.
 
 
@@ -3137,7 +3141,7 @@ SELECT pg_catalog.setval('public.buddy_requests_reviewbuddy_id_seq', 1, false);
 -- Name: chat_chatmessage_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.chat_chatmessage_id_seq', 50, true);
+SELECT pg_catalog.setval('public.chat_chatmessage_id_seq', 51, true);
 
 
 --
@@ -3389,7 +3393,7 @@ SELECT pg_catalog.setval('public.wagtailcore_pageviewrestriction_id_seq', 1, fal
 -- Name: wagtailcore_referenceindex_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.wagtailcore_referenceindex_id_seq', 143, true);
+SELECT pg_catalog.setval('public.wagtailcore_referenceindex_id_seq', 145, true);
 
 
 --
@@ -6413,7 +6417,7 @@ ALTER TABLE ONLY public.wagtailusers_userprofile
     ADD CONSTRAINT wagtailusers_userpro_user_id_59c92331_fk_accounts_ FOREIGN KEY (user_id) REFERENCES public.accounts_customuser(id) DEFERRABLE INITIALLY DEFERRED;
 
 
--- Completed on 2025-03-29 13:00:08
+-- Completed on 2025-04-18 10:55:10
 
 --
 -- PostgreSQL database dump complete
