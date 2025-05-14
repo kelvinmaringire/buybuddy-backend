@@ -14,3 +14,4 @@ class UserUpdate(generics.RetrieveUpdateAPIView):
     serializer_class = CustomUserSerializer
 
 
+

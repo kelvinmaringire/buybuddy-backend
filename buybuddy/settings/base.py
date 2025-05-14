@@ -48,7 +48,9 @@ INSTALLED_APPS = [
     "modelcluster",
     "taggit",
     "rest_framework",
+    'rest_framework_gis',
     "rest_framework_simplejwt",
+    'wagtailgeowidget',
     "corsheaders",
     "channels",
 
@@ -90,6 +92,14 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^file://.*$",
 ]
 """
+
+GOOGLE_MAPS_V3_APIKEY = 'AIzaSyD7NL9oNrApHfBlz1YL52_QoHcJYDvpHGQ'
+
+GEO_WIDGET_DEFAULT_LOCATION = {
+    'lat': -34.435955,
+    'lng': 19.2147969
+}
+
 
 CORS_ALLOW_ALL_ORIGINS = True
 

@@ -1,11 +1,15 @@
 from django.db import models
 
 from django.contrib.gis.db import models as postgis_models
+from django.utils.translation import gettext as _
 
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.images.models import Image
 from wagtail.snippets.models import register_snippet
 from wagtail.search import index
+
+from wagtailgeowidget import geocoders
+from wagtailgeowidget.panels import GeoAddressPanel, GoogleMapsPanel
 
 from accounts.models import CustomUser
 
@@ -13,7 +17,7 @@ from accounts.models import CustomUser
 @register_snippet
 class Store(index.Indexed, models.Model):
     name = models.CharField(max_length=100)
-    address = models.TextField()
+    address = models.CharField(max_length=250, blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     website = models.URLField(blank=True, null=True)
     location = postgis_models.PointField(geography=True, srid=4326, null=True, blank=True)
@@ -23,9 +27,12 @@ class Store(index.Indexed, models.Model):
 
     panels = [
         FieldPanel("name"),
-        FieldPanel("address"),
         FieldPanel("phone_number"),
         FieldPanel("website"),
+        MultiFieldPanel([
+            GeoAddressPanel("address", geocoder=geocoders.GOOGLE_MAPS),
+            GoogleMapsPanel('location', address_field='address'),
+        ], _('Geo details')),
     ]
 
     search_fields = [
