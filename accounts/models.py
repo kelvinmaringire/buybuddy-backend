@@ -15,7 +15,7 @@ class CustomUser(AbstractUser):
     ]
     sex = models.CharField(max_length=1, choices=sex_choices, null=True, blank=True)
     physical_address = models.TextField(null=True, blank=True)
-    phone_number = models.IntegerField(blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
     pic = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True, blank=True, related_query_name='user_pic')
     location = postgis_models.PointField(geography=True, srid=4326, null=True, blank=True)
 
