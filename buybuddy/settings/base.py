@@ -54,6 +54,14 @@ INSTALLED_APPS = [
     "corsheaders",
     "channels",
 
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -71,29 +79,44 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "allauth.account.middleware.AccountMiddleware", # New MIDDLEWARE
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware", # New MIDDLEWARE
 ]
 
 ####################################### New Settings ##############################
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
-"""
-CORS_ALLOWED_ORIGINS = [
-    "https://buybuddysave.co.za",
-    "http://buybuddysave.co.za",
-    "http://localhost:9000",
-    "http://127.0.0.1:9000",
-]
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
 
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^file://.*$",
-]
-"""
+# Configure providers
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+            'secret': os.getenv('GOOGLE_SECRET'),
+            'key': ''
+        },
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    }
+}
 
-GOOGLE_MAPS_V3_APIKEY = 'AIzaSyD7NL9oNrApHfBlz1YL52_QoHcJYDvpHGQ'
+# JWT Settings
+REST_AUTH = {
+    'USE_JWT': True,
+    'TOKEN_MODEL': None,  # Add this line
+}
+
+ACCOUNT_USERNAME_REQUIRED = True  # Needed for now to avoid warning
+ACCOUNT_EMAIL_REQUIRED = True     # Needed for now to avoid warning
+
+GOOGLE_MAPS_V3_APIKEY = os.getenv('GOOGLE_MAPS_V3_APIKEY')
 
 GEO_WIDGET_DEFAULT_LOCATION = {
     'lat': -34.435955,
@@ -104,8 +127,8 @@ GEO_WIDGET_DEFAULT_LOCATION = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=14),
 }
 
 REST_FRAMEWORK = {
